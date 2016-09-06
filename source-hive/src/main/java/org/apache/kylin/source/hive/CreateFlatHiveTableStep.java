@@ -46,7 +46,7 @@ public class CreateFlatHiveTableStep extends AbstractExecutable {
 
     private long readRowCountFromFile() throws IOException {
         Path rowCountFile = new Path(getRowCountOutputDir(), "000000_0");
-
+        logger.info("***************read from hdfs *****************");
         FileSystem fs = FileSystem.get(rowCountFile.toUri(), HadoopUtil.getCurrentConfiguration());
         InputStream in = fs.open(rowCountFile);
         try {
@@ -100,6 +100,8 @@ public class CreateFlatHiveTableStep extends AbstractExecutable {
     protected ExecuteResult doWork(ExecutableContext context) throws ExecuteException {
         KylinConfig config = getCubeSpecificConfig();
         try {
+            logger.info("job before: readRowCountFromFile");
+            logger.error("job before: readRowCountFromFile" );
             long rowCount = readRowCountFromFile();
             if (!config.isEmptySegmentAllowed() && rowCount == 0) {
                 stepLogger.log("Detect upstream hive table is empty, " + "fail the job because \"kylin.job.allow.empty.segment\" = \"false\"");

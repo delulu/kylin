@@ -73,7 +73,9 @@ public class HiveColumnCardinalityJob extends AbstractHadoopJob {
             KylinConfig kylinConfig = KylinConfig.getInstanceFromEnv();
             JobEngineConfig jobEngineConfig = new JobEngineConfig(kylinConfig);
             conf.addResource(new Path(jobEngineConfig.getHadoopJobConfFilePath(null)));
-
+            logger.info("hive.metastore.uris is ",conf.get("hive.metastore.uris"));
+            conf.set("hive.metastore.uris",kylinConfig.getHiveMetastoreUri());
+            logger.info("hive.metastore.uris is ",conf.get("hive.metastore.uris"));
             job = Job.getInstance(conf, jobName);
 
             setJobClasspath(job, kylinConfig);

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.cli.Options;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
@@ -37,6 +38,7 @@ import org.apache.kylin.engine.mr.IMRInput.IMRTableInputFormat;
 import org.apache.kylin.engine.mr.MRUtil;
 import org.apache.kylin.engine.mr.common.AbstractHadoopJob;
 import org.apache.kylin.engine.mr.common.BatchConstants;
+import org.apache.kylin.job.engine.JobEngineConfig;
 import org.apache.kylin.metadata.model.SegmentStatusEnum;
 import org.apache.kylin.metadata.model.TblColRef;
 import org.slf4j.Logger;
@@ -60,8 +62,11 @@ public class FactDistinctColumnsJob extends AbstractHadoopJob {
             options.addOption(OPTION_STATISTICS_OUTPUT);
             options.addOption(OPTION_STATISTICS_SAMPLING_PERCENT);
             parseOptions(options, args);
-
-            job = Job.getInstance(getConf(), getOptionValue(OPTION_JOB_NAME));
+            Configuration conf = getConf();
+            KylinConfig kylinConfig = KylinConfig.getInstanceFromEnv();
+            conf.set("hive.metastore.uris",kylinConfig.getHiveMetastoreUri());
+            logger.info("hive.metastore.uris is ",conf.get("hive.metastore.uris"));
+            job = Job.getInstance(conf, getOptionValue(OPTION_JOB_NAME));
             String cubeName = getOptionValue(OPTION_CUBE_NAME);
             Path output = new Path(getOptionValue(OPTION_OUTPUT_PATH));
 

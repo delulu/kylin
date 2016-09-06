@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.kylin.common.KylinConfig;
 import org.apache.kylin.common.util.JsonUtil;
 import org.apache.kylin.job.exception.ExecuteException;
 import org.apache.kylin.job.execution.AbstractExecutable;
@@ -52,6 +53,8 @@ public class HqlExecutable extends AbstractExecutable {
     protected ExecuteResult doWork(ExecutableContext context) throws ExecuteException {
         try {
             Map<String, String> configMap = getConfiguration();
+            String hiveMetaStoreUri = KylinConfig.getInstanceFromEnv().getHiveMetastoreUri();
+            configMap.put("hive.metastore.uris",hiveMetaStoreUri);
             HiveClient hiveClient = new HiveClient(configMap);
 
             for (String hql : getHqls()) {

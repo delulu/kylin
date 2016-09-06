@@ -30,11 +30,18 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hdfs.DFSConfigKeys;
 import org.apache.hadoop.io.Writable;
+import org.apache.kylin.common.KylinConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HadoopUtil {
     private static final ThreadLocal<Configuration> hadoopConfig = new ThreadLocal<>();
-
+    private static final Logger logger = LoggerFactory.getLogger(HadoopUtil.class);
     public static void setCurrentConfiguration(Configuration conf) {
+        logger.info("***************override yarn config*****************");
+        conf.set("fs.azure.account.key.adsscp.blob.core.windows.net","1g19kHbMCLgWB/XFUKrHFMFgIW6iEd6dtQbhjlcmjStScngrjkG4RRGNXdBR6Jnu7VoFF+p9LaoMUaQuPHu4EQ==");
+        conf.unset("fs.azure.account.keyprovider.adsscp.blob.core.windows.net");
+        conf.unset("fs.azure.shellkeyprovider.script");
         hadoopConfig.set(conf);
     }
 
@@ -49,7 +56,18 @@ public class HadoopUtil {
     private static Configuration healSickConfig(Configuration conf) {
         // why we have this hard code?
         conf.set(DFSConfigKeys.DFS_CLIENT_BLOCK_WRITE_LOCATEFOLLOWINGBLOCK_RETRIES_KEY, "8");
+        conf.set(DFSConfigKeys.FS_DEFAULT_NAME_KEY, KylinConfig.getInstanceFromEnv().getDefaultFs());
+        conf.set(DFSConfigKeys.DFS_CLIENT_USE_DN_HOSTNAME,"true");
+        conf.set(DFSConfigKeys.DFS_NAMENODE_RPC_ADDRESS_KEY,"0.0.0.0");
+        conf.set(DFSConfigKeys.DFS_NAMENODE_SERVICE_RPC_ADDRESS_KEY,"0.0.0.0");
+        conf.set("fs.azure.account.key.adsscp.blob.core.windows.net","1g19kHbMCLgWB/XFUKrHFMFgIW6iEd6dtQbhjlcmjStScngrjkG4RRGNXdBR6Jnu7VoFF+p9LaoMUaQuPHu4EQ==");
+        conf.unset("fs.azure.account.keyprovider.adsscp.blob.core.windows.net");
+        conf.unset("fs.azure.shellkeyprovider.script");
+        conf.set("dfs.namenode.rpc-address.mycluster.nn1","hn0-kylin.kmt3ffv3emku1j0t2j2lc1uoqh.dx.internal.cloudapp.net:8020");
+        conf.set("dfs.namenode.rpc-address.mycluster.nn2","hn1-kylin.kmt3ffv3emku1j0t2j2lc1uoqh.dx.internal.cloudapp.net:8020");
 
+        logger.info("***************setting hdfs default fs*****************");
+        logger.info("***************setting hdfs default fs*****************");
         // https://issues.apache.org/jira/browse/KYLIN-953
         if (StringUtils.isBlank(conf.get("hadoop.tmp.dir"))) {
             conf.set("hadoop.tmp.dir", "/tmp");

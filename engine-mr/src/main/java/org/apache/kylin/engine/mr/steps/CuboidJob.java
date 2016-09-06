@@ -107,8 +107,11 @@ public class CuboidJob extends AbstractHadoopJob {
                 logger.info("Skip job " + getOptionValue(OPTION_JOB_NAME) + " for " + cubeName + "[" + segmentName + "]");
                 return 0;
             }
-
-            job = Job.getInstance(getConf(), getOptionValue(OPTION_JOB_NAME));
+            Configuration conf = getConf();
+            KylinConfig kylinConfig = KylinConfig.getInstanceFromEnv();
+            conf.set("hive.metastore.uris",kylinConfig.getHiveMetastoreUri());
+            logger.info("hive.metastore.uris is ",conf.get("hive.metastore.uris"));
+            job = Job.getInstance(conf, getOptionValue(OPTION_JOB_NAME));
             logger.info("Starting: " + job.getJobName());
 
             setJobClasspath(job, cube.getConfig());

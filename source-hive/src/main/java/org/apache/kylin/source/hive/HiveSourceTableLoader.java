@@ -19,11 +19,7 @@
 package org.apache.kylin.source.hive;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import org.apache.hadoop.hive.metastore.api.FieldSchema;
 import org.apache.hadoop.hive.metastore.api.Table;
@@ -90,7 +86,10 @@ public class HiveSourceTableLoader {
         MetadataManager metaMgr = MetadataManager.getInstance(KylinConfig.getInstanceFromEnv());
         for (String tableName : tables) {
             Table table = null;
-            HiveClient hiveClient = new HiveClient();
+            String hiveMetaStoreUri = KylinConfig.getInstanceFromEnv().getHiveMetastoreUri();
+            Map<String, String> configMap = new HashMap<String, String>();
+            configMap.put("hive.metastore.uris",hiveMetaStoreUri);
+            HiveClient hiveClient = new HiveClient(configMap);
             List<FieldSchema> partitionFields = null;
             List<FieldSchema> fields = null;
             try {
