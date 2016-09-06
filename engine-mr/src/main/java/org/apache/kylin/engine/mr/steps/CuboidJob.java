@@ -108,6 +108,12 @@ public class CuboidJob extends AbstractHadoopJob {
             }
 
             job = Job.getInstance(getConf(), getOptionValue(OPTION_JOB_NAME));
+
+            Configuration conf = getConf();
+            KylinConfig kylinConfig = KylinConfig.getInstanceFromEnv();
+            conf.set("hive.metastore.uris",kylinConfig.getHiveMetastoreUri());
+            logger.info("hive.metastore.uris is ",conf.get("hive.metastore.uris"));
+            job = Job.getInstance(conf, getOptionValue(OPTION_JOB_NAME));
             job.getConfiguration().set(BatchConstants.ARG_CUBING_JOB_ID, cubingJobId);
             logger.info("Starting: " + job.getJobName());
 

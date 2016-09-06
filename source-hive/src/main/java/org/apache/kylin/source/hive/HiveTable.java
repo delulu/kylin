@@ -19,6 +19,8 @@
 package org.apache.kylin.source.hive;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.kylin.common.KylinConfig;
 import org.apache.kylin.common.util.Pair;
@@ -86,7 +88,10 @@ public class HiveTable implements ReadableTable {
     public HiveClient getHiveClient() {
 
         if (hiveClient == null) {
-            hiveClient = new HiveClient();
+            String hiveMetaStoreUri = KylinConfig.getInstanceFromEnv().getHiveMetastoreUri();
+            Map<String, String> configMap = new HashMap<String, String>();
+            configMap.put("hive.metastore.uris",hiveMetaStoreUri);
+            hiveClient = new HiveClient(configMap);
         }
         return hiveClient;
     }

@@ -20,7 +20,9 @@ package org.apache.kylin.job;
 
 import java.io.*;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -205,7 +207,10 @@ public class DeployUtil {
         String tableFileDir = temp.getParent();
         temp.delete();
 
-        HiveClient hiveClient = new HiveClient();
+        String hiveMetaStoreUri = KylinConfig.getInstanceFromEnv().getHiveMetastoreUri();
+        Map<String, String> configMap = new HashMap<String, String>();
+        configMap.put("hive.metastore.uris",hiveMetaStoreUri);
+        HiveClient hiveClient = new HiveClient(configMap);
         // create hive tables
         hiveClient.executeHQL("CREATE DATABASE IF NOT EXISTS EDW");
         hiveClient.executeHQL(generateCreateTableHql(metaMgr.getTableDesc(TABLE_CAL_DT.toUpperCase())));

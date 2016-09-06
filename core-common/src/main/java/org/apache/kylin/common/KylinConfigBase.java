@@ -221,6 +221,14 @@ abstract public class KylinConfigBase implements Serializable {
         return getOptional("kylin.hbase.cluster.hdfs.config.file", "");
     }
 
+    public String getDefaultFs() {
+        return getOptional("kylin.fs.defaultFS", "");
+    }
+
+    public String getHiveMetastoreUri() {
+        return getOptional("kylin.hive.metastore.uris", "");
+    }
+
     public String getKylinJobLogDir() {
         return getOptional("kylin.job.log.dir", "/tmp/kylin/logs");
     }

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.apache.commons.cli.Options;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
@@ -93,7 +94,11 @@ public class InMemCuboidJob extends AbstractHadoopJob {
                 return 0;
             }
 
-            job = Job.getInstance(getConf(), getOptionValue(OPTION_JOB_NAME));
+            Configuration conf = getConf();
+            KylinConfig kylinConfig = KylinConfig.getInstanceFromEnv();
+            conf.set("hive.metastore.uris",kylinConfig.getHiveMetastoreUri());
+            logger.info("hive.metastore.uris is ",conf.get("hive.metastore.uris"));
+            job = Job.getInstance(conf, getOptionValue(OPTION_JOB_NAME));
             job.getConfiguration().set(BatchConstants.ARG_CUBING_JOB_ID, cubingJobId);
             logger.info("Starting: " + job.getJobName());
 

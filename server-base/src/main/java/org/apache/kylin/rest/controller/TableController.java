@@ -19,14 +19,7 @@
 package org.apache.kylin.rest.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.kylin.common.KylinConfig;
@@ -312,7 +305,10 @@ public class TableController extends BasicController {
     @RequestMapping(value = "/hive", method = { RequestMethod.GET })
     @ResponseBody
     private static List<String> showHiveDatabases() throws IOException {
-        HiveClient hiveClient = new HiveClient();
+        String hiveMetaStoreUri = KylinConfig.getInstanceFromEnv().getHiveMetastoreUri();
+        Map<String, String> configMap = new HashMap<String, String>();
+        configMap.put("hive.metastore.uris",hiveMetaStoreUri);
+        HiveClient hiveClient = new HiveClient(configMap);
         List<String> results = null;
 
         try {
@@ -333,7 +329,10 @@ public class TableController extends BasicController {
     @RequestMapping(value = "/hive/{database}", method = { RequestMethod.GET })
     @ResponseBody
     private static List<String> showHiveTables(@PathVariable String database) throws IOException {
-        HiveClient hiveClient = new HiveClient();
+        String hiveMetaStoreUri = KylinConfig.getInstanceFromEnv().getHiveMetastoreUri();
+        Map<String, String> configMap = new HashMap<String, String>();
+        configMap.put("hive.metastore.uris",hiveMetaStoreUri);
+        HiveClient hiveClient = new HiveClient(configMap);
         List<String> results = null;
 
         try {
