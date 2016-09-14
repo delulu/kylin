@@ -62,7 +62,7 @@ public class MailServiceTest extends LocalFileMetadataTestCase {
     private boolean sendTestEmail(MailService mailservice) {
 
         List<String> receivers = new ArrayList<String>(1);
-        receivers.add("foobar@foobar.com");
-        return mailservice.sendMail(receivers, "A test email from Kylin", "Hello!");
+        receivers.add("delzh@microsoft.com");
+        return mailservice.sendMail(receivers, "A say-hi email from Kylin", "Hello!");
     }
 }
