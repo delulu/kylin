@@ -20,9 +20,12 @@ package org.apache.kylin.common.util;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 
+import javax.mail.Session;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
@@ -35,6 +38,7 @@ public class MailService {
 
     private Boolean enabled = Boolean.TRUE;
     private String host;
+    private int port;
     private String username;
     private String password;
     private String sender;
@@ -42,16 +46,16 @@ public class MailService {
     private static final Log logger = LogFactory.getLog(MailService.class);
 
     public MailService(KylinConfig config) {
-        this(config.isMailEnabled(), config.getMailHost(), config.getMailUsername(), config.getMailPassword(), config.getMailSender());
+        this(config.isMailEnabled(), config.getMailHost(),config.getMailPort(), config.getMailUsername(), config.getMailPassword(), config.getMailSender());
     }
 
-    private MailService(boolean enabled, String host, String username, String password, String sender) {
+    private MailService(boolean enabled, String host, int port, String username, String password, String sender) {
         this.enabled = enabled;
         this.host = host;
+        this.port = port;
         this.username = username;
         this.password = password;
         this.sender = sender;
-
         if (enabled) {
             if (host.isEmpty()) {
                 throw new RuntimeException("mail service host is empty");
@@ -87,11 +91,12 @@ public class MailService {
 
         Email email = new HtmlEmail();
         email.setHostName(host);
+        email.setSmtpPort(port);
         if (username != null && username.trim().length() > 0) {
+            logger.info("username is "+username);
             email.setAuthentication(username, password);
         }
-
-        //email.setDebug(true);
+        email.setDebug(true);
         try {
             for (String receiver : receivers) {
                 email.addTo(receiver);
